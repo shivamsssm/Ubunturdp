@@ -3,6 +3,7 @@ clear
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+NC='\033[0m' # No Color
 echo "
 #######################################################################################
 #
@@ -13,7 +14,7 @@ echo "
 #
 #######################################################################################"
 echo "Select an option:"
-echo "1) Ubuntu Desktop - XRDP"
+echo "1) Kali Linux - XRDP"
 echo "2) PufferPanel"
 echo "3) Install Basic Packages"
 echo "4) Install Nodejs"
@@ -21,32 +22,32 @@ read option
 
 if [ $option -eq 1 ]; then
     clear
-    echo -e "${RED}Downloading... Please Wait"
+    echo -e "${RED}Installing Kali Linux with XRDP... Please Wait${NC}"
     apt update && apt upgrade -y
     export SUDO_FORCE_REMOVE=yes
     apt remove sudo -y
-
-    # Install Ubuntu Desktop
-    apt install ubuntu-desktop -y
-
-    # Install XRDP
-    apt install xrdp -y
-
-    # Configure XRDP to use Ubuntu Desktop
-    echo "gnome-session" >> /etc/xrdp/startwm.sh
-
+    apt install -y kali-desktop-xfce xrdp
+    
+    # Configure XRDP for Kali
+    echo "xfce4-session" > /etc/xrdp/startwm.sh
+    chmod +x /etc/xrdp/startwm.sh
+    
     clear
-    echo -e "${GREEN}Downloading and installation completed!"
-    echo -e "${YELLOW}Select RDP Port"
+    echo -e "${GREEN}Kali Linux installation completed!${NC}"
+    echo -e "${YELLOW}Select RDP Port (default is 3389):${NC}"
     read selectedPort
-
-    # Change the default RDP port
+    
+    # Set default port if empty
+    if [ -z "$selectedPort" ]; then
+        selectedPort="3389"
+    fi
+    
     sed -i "s/port=3389/port=$selectedPort/g" /etc/xrdp/xrdp.ini
-
-    clear
     service xrdp restart
     clear
-    echo -e "${GREEN}RDP Created And Started on Port $selectedPort"
+    echo -e "${GREEN}Kali Linux RDP Created And Started on Port $selectedPort${NC}"
+    echo -e "${YELLOW}You can connect using any RDP client with username/password you set for your system.${NC}"
+
 
 elif [ $option -eq 2 ]; then
     clear
